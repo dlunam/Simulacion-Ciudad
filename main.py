@@ -1,3 +1,5 @@
+import funciones as func
+
 tipos_de_edificios = [
     {
         "nombre": "Casa",
@@ -42,3 +44,5 @@ tipos_de_edificios = [
         "tiempo_construccion_rango": (3, 10)
     }
 ]
+
+print(func.generar_edificios(tipos_de_edificios))
