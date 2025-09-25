@@ -1,5 +1,5 @@
 import random
-import time   # 👈 para el modo automático
+import time   #para el modo automático
 
 def generar_edificios(tipos):
     resultados = []
@@ -49,7 +49,7 @@ def simular_construccion(ciudad, trabajadores):
     productividad_diaria = calcular_productividad_total(trabajadores)
     coste_trabajadores_dia = calcular_coste_trabajadores_dia(trabajadores)
 
-    # 👇 Preguntar al usuario el modo de simulación
+    # Preguntar al usuario el modo de simulación
     print("\nOpciones de simulación:")
     print("1. Manual (presionar ENTER para avanzar cada día)")
     print("2. Automática (el programa avanza solo)")
@@ -101,7 +101,7 @@ def simular_construccion(ciudad, trabajadores):
 
             dia += 1
 
-            # 👇 Dependiendo del modo elegido
+            #Dependiendo del modo elegido
             if modo == "1":
                 input("Presiona ENTER para avanzar al siguiente día...")
             else:
