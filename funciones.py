@@ -9,7 +9,7 @@ def generar_edificios(tipos):
         tiempo = random.randint(*edificio["tiempo_construccion_rango"])
 
         # Cada edificio necesita "unidades de trabajo"
-        trabajo_necesario = tiempo * 100  
+        trabajo_necesario = tiempo * 24
 
         resultados.append({
             "nombre": edificio["nombre"],
