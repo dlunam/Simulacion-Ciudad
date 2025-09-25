@@ -19,7 +19,7 @@ tipos_de_trabajadores = [
 # Preparación inicial
 ciudad = func.generar_edificios(tipos_de_edificios)
 
-print("📊 Resultados iniciales de la ciudad:\n")
+print(" Resultados iniciales de la ciudad:\n")
 for edificio in ciudad:
     print(f"{edificio['nombre']}: {edificio['cantidad']} unidades | "
           f"Coste total: ${edificio['coste_total']} | "
