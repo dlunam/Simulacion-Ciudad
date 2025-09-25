@@ -1,4 +1,5 @@
 import random
+import time   # 👈 para el modo automático
 
 def generar_edificios(tipos):
     resultados = []
@@ -48,10 +49,23 @@ def simular_construccion(ciudad, trabajadores):
     productividad_diaria = calcular_productividad_total(trabajadores)
     coste_trabajadores_dia = calcular_coste_trabajadores_dia(trabajadores)
 
+    # 👇 Preguntar al usuario el modo de simulación
+    print("\nOpciones de simulación:")
+    print("1. Manual (presionar ENTER para avanzar cada día)")
+    print("2. Automática (el programa avanza solo)")
+    modo = input("Elige el modo de simulación (1 o 2): ")
+
+    espera = 0
+    if modo == "2":
+        try:
+            espera = float(input("¿Cuántos segundos quieres esperar entre días? "))
+        except ValueError:
+            print("Valor no válido, se usará 1 segundo por defecto.")
+            espera = 1.0
+
     dia = 1
     edificios_terminados = 0
     coste_total_trabajadores = 0
-    coste_total_edificios = 0
 
     print("\n🏗️ Iniciando la simulación de la construcción...\n")
 
@@ -68,7 +82,6 @@ def simular_construccion(ciudad, trabajadores):
             # Cálculos de progreso
             porcentaje = edificio["trabajo_realizado"] / edificio["trabajo_total"]
             gasto_edificio = int(edificio["coste_total"] * porcentaje)
-            coste_total_edificios += gasto_edificio - (coste_total_edificios - sum(e["coste_total"] * (e["trabajo_realizado"]/e["trabajo_total"]) for e in ciudad))
 
             # Costes de trabajadores
             coste_total_trabajadores += coste_trabajadores_dia
@@ -87,7 +100,12 @@ def simular_construccion(ciudad, trabajadores):
             print(f"  📊 Coste total acumulado: ${coste_total_trabajadores + int(sum(e['coste_total'] * (e['trabajo_realizado']/e['trabajo_total']) for e in ciudad))}\n")
 
             dia += 1
-            input("Presiona ENTER para avanzar al siguiente día...")
+
+            # 👇 Dependiendo del modo elegido
+            if modo == "1":
+                input("Presiona ENTER para avanzar al siguiente día...")
+            else:
+                time.sleep(espera)
 
         edificios_terminados += 1
         print(f"✅ {edificio['nombre']} terminado en el día {dia-1}.\n")

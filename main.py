@@ -29,7 +29,7 @@ print("\n")
 func.mostrar_trabajadores(tipos_de_trabajadores)
 
 # Confirmación del usuario
-input("\nPresiona ENTER para comenzar la simulación...")
+input("\nPresiona ENTER para configurar la simulación...")
 
 # Simulación paso a paso (día a día, edificio por edificio)
 func.simular_construccion(ciudad, tipos_de_trabajadores)
