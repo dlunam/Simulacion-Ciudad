@@ -4,8 +4,8 @@ tipos_de_edificios = [
     {
         "nombre": "Casa",
         "cantidad_rango": (5, 15),
-        "coste_rango": (10000, 50000),
-        "tiempo_construccion_rango": (5, 15)
+        "coste_rango": (10000, 50000), #$
+        "tiempo_construccion_rango": (5, 15) #dias
     },
     {
         "nombre": "Edificio de oficinas",
@@ -49,8 +49,8 @@ tipos_de_trabajadores = [
     {
         "nombre": "Currito",
         "cantidad": 10,
-        "horas_diarias": 8,
-        "coste": 50,  
+        "horas_diarias": 8, #horas por dia
+        "coste": 50,  # coste por hora
         "productividad": 0.5  
     },
     {
@@ -76,5 +76,10 @@ ciudad = func.generar_edificios(tipos_de_edificios)
 print("Resultados de la simulación de la ciudad:\n")
 for edificio in ciudad:
     print(f"{edificio['nombre']}: {edificio['cantidad']} unidades | "
-          f"Coste: {edificio['coste']} | "
+          f"Coste: ${edificio['coste']} | "
           f"Tiempo de construcción: {edificio['tiempo_construccion']} días")
+
+print("\n") 
+
+
+func.mostrar_trabajadores(tipos_de_trabajadores)

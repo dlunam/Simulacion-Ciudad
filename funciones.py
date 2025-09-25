@@ -14,3 +14,11 @@ def generar_edificios(tipos):
             "tiempo_construccion": tiempo
         })
     return resultados
+
+def mostrar_trabajadores(trabajadores):
+    print("Resumen de trabajadores:\n")
+    for t in trabajadores:
+        print(f"{t['nombre']}: {t['cantidad']} disponibles | "
+              f"{t['horas_diarias']} horas/día | "
+              f"Coste: ${t['coste']}/hora | "
+              f"Productividad: {t['productividad']}")
