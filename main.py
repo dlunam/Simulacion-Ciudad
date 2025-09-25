@@ -23,7 +23,7 @@ print("📊 Resultados iniciales de la ciudad:\n")
 for edificio in ciudad:
     print(f"{edificio['nombre']}: {edificio['cantidad']} unidades | "
           f"Coste total: ${edificio['coste_total']} | "
-          f"Tiempo de construcción: {edificio['tiempo_construccion']} días")
+          f"Tiempo estimado (sin trabajadores): {edificio['tiempo_construccion']} días")
 
 print("\n")
 func.mostrar_trabajadores(tipos_de_trabajadores)
@@ -31,5 +31,5 @@ func.mostrar_trabajadores(tipos_de_trabajadores)
 # Confirmación del usuario
 input("\nPresiona ENTER para comenzar la simulación...")
 
-# Simulación paso a paso (día a día)
-func.simular_construccion(ciudad)
+# Simulación paso a paso (día a día, edificio por edificio)
+func.simular_construccion(ciudad, tipos_de_trabajadores)

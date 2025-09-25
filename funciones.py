@@ -7,13 +7,18 @@ def generar_edificios(tipos):
         coste_unitario = random.randint(*edificio["coste_rango"])
         tiempo = random.randint(*edificio["tiempo_construccion_rango"])
 
+        # Cada edificio necesita "unidades de trabajo"
+        trabajo_necesario = tiempo * 100  
+
         resultados.append({
             "nombre": edificio["nombre"],
             "cantidad": cantidad,
             "coste_unitario": coste_unitario,
             "coste_total": cantidad * coste_unitario,
             "tiempo_construccion": tiempo,
-            "progreso": 0  # días completados
+            "trabajo_total": trabajo_necesario,
+            "trabajo_realizado": 0,
+            "terminado": False
         })
     return resultados
 
@@ -31,30 +36,64 @@ def barra_progreso(porcentaje, longitud=30):
     restante = longitud - completado
     return "[" + "#" * completado + "-" * restante + f"] {porcentaje*100:.1f}%"
 
-def simular_construccion(ciudad):
-    """
-    Simula la construcción día a día.
-    Cada edificio avanza 1 día de progreso hasta llegar a su tiempo de construcción.
-    """
+def calcular_productividad_total(trabajadores):
+    """Suma la productividad ponderada por la cantidad de trabajadores."""
+    return sum(t["cantidad"] * t["productividad"] * t["horas_diarias"] for t in trabajadores)
+
+def calcular_coste_trabajadores_dia(trabajadores):
+    """Coste total en sueldos de un día de trabajo."""
+    return sum(t["cantidad"] * t["coste"] * t["horas_diarias"] for t in trabajadores)
+
+def simular_construccion(ciudad, trabajadores):
+    productividad_diaria = calcular_productividad_total(trabajadores)
+    coste_trabajadores_dia = calcular_coste_trabajadores_dia(trabajadores)
+
     dia = 1
-    terminado = False
+    edificios_terminados = 0
+    coste_total_trabajadores = 0
+    coste_total_edificios = 0
 
-    while not terminado:
-        print(f"\n📅 Día {dia}")
-        terminado = True  # asumimos que todo está terminado, salvo que veamos lo contrario
+    print("\n🏗️ Iniciando la simulación de la construcción...\n")
 
-        for edificio in ciudad:
-            if edificio["progreso"] < edificio["tiempo_construccion"]:
-                edificio["progreso"] += 1
-                terminado = False  # aún queda trabajo por hacer
+    for edificio in ciudad:
+        print(f"\n=== Construyendo {edificio['nombre']} ({edificio['cantidad']} unidades) ===\n")
 
-            porcentaje = edificio["progreso"] / edificio["tiempo_construccion"]
-            gasto_estimado = edificio["coste_total"] * porcentaje
+        while not edificio["terminado"]:
+            # Avance del día
+            edificio["trabajo_realizado"] += productividad_diaria
+            if edificio["trabajo_realizado"] >= edificio["trabajo_total"]:
+                edificio["trabajo_realizado"] = edificio["trabajo_total"]
+                edificio["terminado"] = True
 
-            print(f"{edificio['nombre']} ({edificio['cantidad']} unidades):")
+            # Cálculos de progreso
+            porcentaje = edificio["trabajo_realizado"] / edificio["trabajo_total"]
+            gasto_edificio = int(edificio["coste_total"] * porcentaje)
+            coste_total_edificios += gasto_edificio - (coste_total_edificios - sum(e["coste_total"] * (e["trabajo_realizado"]/e["trabajo_total"]) for e in ciudad))
+
+            # Costes de trabajadores
+            coste_total_trabajadores += coste_trabajadores_dia
+
+            # Mostrar estado diario
+            print(f"📅 Día {dia}")
+            print(f"  {edificio['nombre']}:")
             print(f"  Progreso: {barra_progreso(porcentaje)}")
-            print(f"  Gastado hasta ahora: ${int(gasto_estimado)} / {edificio['coste_total']}")
-            print(f"  Tiempo transcurrido: {edificio['progreso']} / {edificio['tiempo_construccion']} días\n")
+            print(f"  Gastado hasta ahora en este edificio: ${gasto_edificio} / {edificio['coste_total']}")
+            print(f"  Trabajo realizado: {int(edificio['trabajo_realizado'])} / {edificio['trabajo_total']}")
 
-        dia += 1
-        input("Presiona ENTER para avanzar al siguiente día...")
+            print("\n--- Estado General ---")
+            print(f"  🏠 Edificios terminados: {edificios_terminados}")
+            print(f"  💰 Coste acumulado trabajadores: ${coste_total_trabajadores}")
+            print(f"  💵 Coste acumulado edificios: ${int(sum(e['coste_total'] * (e['trabajo_realizado']/e['trabajo_total']) for e in ciudad))}")
+            print(f"  📊 Coste total acumulado: ${coste_total_trabajadores + int(sum(e['coste_total'] * (e['trabajo_realizado']/e['trabajo_total']) for e in ciudad))}\n")
+
+            dia += 1
+            input("Presiona ENTER para avanzar al siguiente día...")
+
+        edificios_terminados += 1
+        print(f"✅ {edificio['nombre']} terminado en el día {dia-1}.\n")
+
+    print("\n🎉 ¡Simulación terminada!")
+    print(f"🏠 Total de edificios terminados: {edificios_terminados}")
+    print(f"💵 Coste total en construcción: ${sum(e['coste_total'] for e in ciudad)}")
+    print(f"💰 Coste total en trabajadores: ${coste_total_trabajadores}")
+    print(f"📊 Coste final total: ${sum(e['coste_total'] for e in ciudad) + coste_total_trabajadores}")
