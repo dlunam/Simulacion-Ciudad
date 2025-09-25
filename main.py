@@ -45,4 +45,36 @@ tipos_de_edificios = [
     }
 ]
 
-print(func.generar_edificios(tipos_de_edificios))
+tipos_de_trabajadores = [
+    {
+        "nombre": "Currito",
+        "cantidad": 10,
+        "horas_diarias": 8,
+        "coste": 50,  
+        "productividad": 0.5  
+    },
+    {
+        "nombre": "Manita",
+        "cantidad": 5,
+        "horas_diarias": 6,
+        "coste": 80,
+        "productividad": 1.0
+    },
+    {
+        "nombre": "Maquinista",
+        "cantidad": 3,
+        "horas_diarias": 4,
+        "coste": 120,
+        "productividad": 2.0
+    }
+]
+
+
+
+ciudad = func.generar_edificios(tipos_de_edificios)
+
+print("Resultados de la simulación de la ciudad:\n")
+for edificio in ciudad:
+    print(f"{edificio['nombre']}: {edificio['cantidad']} unidades | "
+          f"Coste: {edificio['coste']} | "
+          f"Tiempo de construcción: {edificio['tiempo_construccion']} días")
