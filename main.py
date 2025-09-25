@@ -12,7 +12,7 @@ tipos_de_edificios = [
 
 tipos_de_trabajadores = [
     {"nombre": "Currito", "cantidad": 10, "horas_diarias": 8, "coste": 50, "productividad": 0.5},
-    {"nombre": "Manita", "cantidad": 5, "horas_diarias": 6, "coste": 80, "productividad": 1.0},
+    {"nombre": "Manitas", "cantidad": 5, "horas_diarias": 6, "coste": 80, "productividad": 1.0},
     {"nombre": "Maquinista", "cantidad": 3, "horas_diarias": 4, "coste": 120, "productividad": 3.0}
 ]
 
