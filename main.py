@@ -1,35 +1,59 @@
-import funciones as func
+from modelos import Ciudad, Edificio, Trabajador
+from mapa import Mapa
+from simulacion import Simulador
+import ui
 
-tipos_de_edificios = [
-    {"nombre": "Casa", "cantidad_rango": (5, 15), "coste_rango": (10000, 50000), "tiempo_construccion_rango": (5, 15)},
-    {"nombre": "Edificio de oficinas", "cantidad_rango": (2, 10), "coste_rango": (100000, 500000), "tiempo_construccion_rango": (30, 90)},
-    {"nombre": "Fábrica", "cantidad_rango": (1, 5), "coste_rango": (200000, 1000000), "tiempo_construccion_rango": (45, 120)},
-    {"nombre": "Hospital", "cantidad_rango": (1, 3), "coste_rango": (500000, 2000000), "tiempo_construccion_rango": (60, 150)},
-    {"nombre": "Escuela", "cantidad_rango": (2, 7), "coste_rango": (150000, 700000), "tiempo_construccion_rango": (40, 100)},
-    {"nombre": "Centro comercial", "cantidad_rango": (1, 3), "coste_rango": (300000, 1500000), "tiempo_construccion_rango": (50, 130)},
-    {"nombre": "Parque", "cantidad_rango": (2, 8), "coste_rango": (5000, 30000), "tiempo_construccion_rango": (3, 10)}
-]
 
-tipos_de_trabajadores = [
-    {"nombre": "Currito", "cantidad": 10, "horas_diarias": 8, "coste": 50, "productividad": 0.5},
-    {"nombre": "Manitas", "cantidad": 5, "horas_diarias": 6, "coste": 80, "productividad": 1.0},
-    {"nombre": "Maquinista", "cantidad": 3, "horas_diarias": 4, "coste": 120, "productividad": 3.0}
-]
+def main():
+    ui.titulo("SIMULADOR URBANO (ABM + OPTIMIZACIÓN)")
 
-# Preparación inicial
-ciudad = func.generar_edificios(tipos_de_edificios)
+    # 1) Ciudad + catálogo
+    ciudad = Ciudad(presupuesto=800_000)
 
-print(" Resultados iniciales de la ciudad:\n")
-for edificio in ciudad:
-    print(f"{edificio['nombre']}: {edificio['cantidad']} unidades | "
-          f"Coste total: ${edificio['coste_total']} | "
-          f"Tiempo estimado (sin trabajadores): {edificio['tiempo_construccion']} días")
+    catalogo = [
+        Edificio("Casa", 100_000, 60, (5, 5), trabajo_necesario=15),
+        Edificio("Hospital", 300_000, 200, (15, 10), trabajo_necesario=35),
+        Edificio("Fábrica", 250_000, 180, (10, 15), trabajo_necesario=30),
+        Edificio("Escuela", 150_000, 90, (20, 5), trabajo_necesario=20),
+    ]
 
-print("\n")
-func.mostrar_trabajadores(tipos_de_trabajadores)
+    ui.seccion("Datos iniciales")
+    ui.paso(f"Presupuesto: {ciudad.presupuesto} €")
+    ui.paso("Catálogo (incluye ROI):")
+    for e in catalogo:
+        ui.paso(f"{e.nombre} | coste={e.coste} | beneficio={e.beneficio} | roi={e.roi:.4f}")
 
-# Confirmación del usuario
-input("\nPresiona ENTER para configurar la simulación...")
+    # 2) Mapa con obstáculos
+    mapa = Mapa(25, 25)
+    for i in range(7, 18):
+        mapa.agregar_obstaculo(i, 12)
+    ui.seccion("Mapa")
+    ui.resultado("Mapa generado con obstáculos centrales")
 
-# Simulación paso a paso (día a día, edificio por edificio)
-func.simular_construccion(ciudad, tipos_de_trabajadores)
+    # 3) Trabajadores (agentes)
+    ciudad.agregar_trabajador(Trabajador("Obrero-1", (0, 0), velocidad=2))
+    ciudad.agregar_trabajador(Trabajador("Obrero-2", (0, 1), velocidad=2))
+
+    # 4) Simulador (motor)
+    sim = Simulador(
+        ciudad=ciudad,
+        mapa=mapa,
+        ui=ui,
+        coste_cable_por_metro=50.0,
+        unidad_presupuesto=1000
+    )
+
+    # A) Selección inteligente (ROI o beneficio)
+    ui.seccion("Selección de inversiones (Knapsack)")
+    seleccion = sim.seleccionar_inversiones(catalogo, objetivo="roi")  # prueba "beneficio"
+    for e in seleccion:
+        ui.resultado(f"Seleccionado: {e.nombre} (roi={e.roi:.4f})")
+
+    # B+C) Simulación (agentes + A*), y al final MST
+    sim.ejecutar(max_ticks=200)
+
+    ui.titulo("FIN")
+
+
+if __name__ == "__main__":
+    main()
